@@ -1,0 +1,18 @@
+{
+  "name": "smartlib",
+  "version": "1.0.0",
+  "description": "SmartLib - prototipo de biblioteca digital publica (React Native / Expo)",
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  },
+  "private": true
+}
