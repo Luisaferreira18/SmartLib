@@ -13,6 +13,7 @@ import Perfil from './src/screens/Perfil';
 import DashBib from './src/screens/DashBib';
 import Cadastro from './src/screens/Cadastro';
 import Registrar from './src/screens/Registrar';
+import Devolucao from './src/screens/Devolucao';
 import DashGer from './src/screens/DashGer';
 
 const SCREENS = {
@@ -27,11 +28,13 @@ const SCREENS = {
   dashBib: DashBib,
   cadastro: Cadastro,
   registrar: Registrar,
+  devolucao: Devolucao,
   dashGer: DashGer,
 };
 
 export default function App() {
   const [stack, setStack] = useState([{ name: 'splash', params: {} }]);
+  const [user, setUser] = useState(null);
   const current = stack[stack.length - 1];
   const Screen = SCREENS[current.name];
 
@@ -45,7 +48,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar barStyle="light-content" />
-      <Screen nav={nav} params={current.params} />
+      <Screen nav={nav} params={current.params} user={user} setUser={setUser} />
     </SafeAreaView>
   );
 }

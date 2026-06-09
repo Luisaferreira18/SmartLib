@@ -1,21 +1,51 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { C } from '../theme';
 import Field from '../components/Field';
 import { PrimaryButton, GhostButton } from '../components/Button';
 
 const ROLES = [
-  { key: 'usuario', label: 'Usuario', icon: '👤', to: 'home' },
-  { key: 'bibliotecario', label: 'Bibliotecario', icon: '📚', to: 'dashBib' },
-  { key: 'gestor', label: 'Gestor', icon: '📊', to: 'dashGer' },
+  { key: 'usuario', label: 'Usuario', icon: '👤', to: 'home', name: 'Mariana', org: 'Biblioteca Publica Estadual' },
+  { key: 'bibliotecario', label: 'Bibliotecario', icon: '📚', to: 'dashBib', name: 'Carlos', org: 'Biblioteca do Bairro' },
+  { key: 'gestor', label: 'Gestor', icon: '📊', to: 'dashGer', name: 'Roberto', org: 'Fundacao Municipal de Cultura' },
 ];
 
-export default function Login({ nav }) {
+export default function Login({ nav, setUser }) {
   const [role, setRole] = useState('usuario');
-  const dest = ROLES.find((r) => r.key === role).to;
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState('');
+
+  const handleEntrar = () => {
+    if (!email.trim() || !senha.trim()) {
+      setErro('Preencha e-mail e senha.');
+      return;
+    }
+    if (!email.includes('@')) {
+      setErro('E-mail invalido.');
+      return;
+    }
+    if (senha.length < 4) {
+      setErro('Senha muito curta (minimo 4 caracteres).');
+      return;
+    }
+    const r = ROLES.find((x) => x.key === role);
+    setUser({ name: r.name, role: r.key, email: email.trim(), org: r.org });
+    nav.reset(r.to);
+  };
+
+  const handleCriarConta = () => {
+    Alert.alert('Em breve', 'Cadastro de novos usuarios sera liberado em breve.');
+  };
+
+  const limparErro = () => setErro('');
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: C.card }} contentContainerStyle={{ padding: 28, paddingTop: 40 }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: C.card }}
+      contentContainerStyle={{ padding: 28, paddingTop: 40 }}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={{ alignItems: 'center', marginBottom: 28 }}>
         <View style={styles.logo}>
           <View style={styles.logoBook} />
@@ -24,24 +54,47 @@ export default function Login({ nav }) {
         <Text style={styles.sub}>Biblioteca digital publica</Text>
       </View>
 
-      <Field label="E-mail" placeholder="seu@email.com" />
-      <Field label="Senha" placeholder="••••••••" secure />
+      <Field
+        label="E-mail"
+        placeholder="seu@email.com"
+        value={email}
+        onChangeText={(t) => { setEmail(t); limparErro(); }}
+        keyboardType="email-address"
+        accessibilityLabel="Campo de e-mail"
+      />
+      <Field
+        label="Senha"
+        placeholder="••••••••"
+        value={senha}
+        onChangeText={(t) => { setSenha(t); limparErro(); }}
+        secure
+        accessibilityLabel="Campo de senha"
+      />
+
+      {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
       <Text style={styles.forgot}>Esqueci minha senha</Text>
 
-      <PrimaryButton onPress={() => nav.reset(dest)}>Entrar</PrimaryButton>
-      <GhostButton onPress={() => nav.reset(dest)}>Criar conta</GhostButton>
+      <PrimaryButton onPress={handleEntrar} accessibilityLabel="Entrar">Entrar</PrimaryButton>
+      <GhostButton onPress={handleCriarConta} accessibilityLabel="Criar conta">Criar conta</GhostButton>
 
       <Text style={styles.entrarComo}>Entrar como</Text>
       <View style={styles.roleRow}>
         {ROLES.map((r) => {
           const on = role === r.key;
           return (
-            <TouchableOpacity key={r.key} style={{ alignItems: 'center', width: 90 }} onPress={() => setRole(r.key)}>
+            <TouchableOpacity
+              key={r.key}
+              style={{ alignItems: 'center', width: 90 }}
+              onPress={() => setRole(r.key)}
+              accessibilityLabel={r.label}
+            >
               <View style={[styles.roleBox, on && styles.roleBoxOn]}>
                 <Text style={{ fontSize: 24 }}>{r.icon}</Text>
               </View>
-              <Text style={[styles.roleLabel, on && { color: C.navy, fontWeight: '700' }]}>{r.label}</Text>
+              <Text style={[styles.roleLabel, on && { color: C.navy, fontWeight: '700' }]}>
+                {r.label}
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -51,11 +104,19 @@ export default function Login({ nav }) {
 }
 
 const styles = StyleSheet.create({
-  logo: { width: 72, height: 72, borderRadius: 12, backgroundColor: C.navy, alignItems: 'center', justifyContent: 'center' },
+  logo: {
+    width: 72,
+    height: 72,
+    borderRadius: 12,
+    backgroundColor: C.navy,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   logoBook: { width: 40, height: 44, borderRadius: 4, backgroundColor: C.accent },
   title: { fontSize: 22, fontWeight: '700', color: C.navy, marginTop: 14 },
   sub: { fontSize: 12, color: C.muted, marginTop: 4 },
   forgot: { color: C.link, fontSize: 12, textAlign: 'right', marginTop: 2 },
+  erro: { color: '#b91c1c', fontSize: 13, textAlign: 'center', marginTop: 4, marginBottom: 4 },
   entrarComo: { textAlign: 'center', color: C.muted, fontSize: 13, marginTop: 32, marginBottom: 16 },
   roleRow: { flexDirection: 'row', justifyContent: 'center' },
   roleBox: {

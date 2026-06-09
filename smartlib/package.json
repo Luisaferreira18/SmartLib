@@ -12,7 +12,8 @@
   "dependencies": {
     "expo": "*",
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-web": "^0.21.0"
   },
   "private": true
 }

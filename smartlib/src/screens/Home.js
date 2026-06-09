@@ -10,19 +10,31 @@ const CARDS = [
   { t: 'Historico', d: 'Historico de leituras.', tint: C.purpleT, to: 'historico' },
 ];
 
-export default function Home({ nav }) {
+export default function Home({ nav, user }) {
+  const nome = user?.name || 'Leitor';
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <View style={styles.header}>
-        <Text style={styles.hi}>Ola, Mariana</Text>
+        <Text style={styles.hi}>Ola, {nome}</Text>
         <Text style={styles.q}>O que voce quer ler hoje?</Text>
       </View>
-      <View style={styles.searchPill}>
+      <TouchableOpacity
+        style={styles.searchPill}
+        onPress={() => nav.navigate('catalogo')}
+        activeOpacity={0.7}
+        accessibilityLabel="Buscar livros"
+      >
         <Text style={styles.searchTxt}>⌕  Buscar livros, autores...</Text>
-      </View>
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 8, paddingBottom: 100 }}>
         {CARDS.map((c, i) => (
-          <TouchableOpacity key={i} style={styles.card} onPress={() => nav.navigate(c.to)}>
+          <TouchableOpacity
+            key={i}
+            style={styles.card}
+            onPress={() => nav.navigate(c.to)}
+            activeOpacity={0.75}
+            accessibilityLabel={c.t}
+          >
             <View style={styles.accent} />
             <View style={[styles.icon, { backgroundColor: c.tint }]} />
             <View style={{ flex: 1 }}>
@@ -33,7 +45,7 @@ export default function Home({ nav }) {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <BottomNav active="home" nav={nav} />
+      <BottomNav active="home" nav={nav} role="usuario" />
     </View>
   );
 }

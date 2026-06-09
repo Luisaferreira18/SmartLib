@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
@@ -28,13 +28,34 @@ const CATS = [
   { l: 'Outros (15%)', c: '#9ca3af' },
 ];
 
-export default function DashGer({ nav }) {
+export default function DashGer({ nav, user }) {
+  const nome = user?.name || 'Gestor';
+  const org = user?.org || 'Fundacao Municipal de Cultura';
+
+  const handleMenu = () => {
+    Alert.alert('Menu', 'Menu lateral em desenvolvimento.');
+  };
+
+  const handleExportar = () => {
+    Alert.alert('Exportar relatorio', 'Escolha o formato de exportacao:', [
+      {
+        text: 'PDF',
+        onPress: () => Alert.alert('Relatorio PDF', 'Relatorio gerado com sucesso!'),
+      },
+      {
+        text: 'Excel',
+        onPress: () => Alert.alert('Relatorio Excel', 'Relatorio gerado com sucesso!'),
+      },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title="Dashboard Gerencial" right="☰" />
+      <TopBar title="Dashboard Gerencial" right="☰" onRightPress={handleMenu} />
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
-        <Text style={styles.hi}>Ola, Roberto!</Text>
-        <Text style={styles.sub}>Fundacao Municipal de Cultura</Text>
+        <Text style={styles.hi}>Ola, {nome}!</Text>
+        <Text style={styles.sub}>{org}</Text>
         <View style={styles.grid}>
           {STATS.map((s, i) => (
             <View key={i} style={[styles.statCard, { backgroundColor: s.tint }]}>
@@ -56,7 +77,7 @@ export default function DashGer({ nav }) {
           </View>
         </View>
 
-        <Text style={styles.section}>Categorias mais populares</Text>
+        <Text style={[styles.section, { marginTop: 16 }]}>Categorias mais populares</Text>
         <View style={styles.pieRow}>
           <View style={styles.donut} />
           <View style={{ flex: 1, marginLeft: 18 }}>
@@ -69,9 +90,15 @@ export default function DashGer({ nav }) {
           </View>
         </View>
 
-        <PrimaryButton style={{ marginTop: 24 }}>Exportar relatorio</PrimaryButton>
+        <PrimaryButton
+          style={{ marginTop: 24 }}
+          onPress={handleExportar}
+          accessibilityLabel="Exportar relatorio"
+        >
+          Exportar relatorio
+        </PrimaryButton>
       </ScrollView>
-      <BottomNav active="home" nav={nav} />
+      <BottomNav active="home" nav={nav} role="gestor" />
     </View>
   );
 }
@@ -85,12 +112,31 @@ const styles = StyleSheet.create({
   statLabel: { fontSize: 12, color: C.muted, marginTop: 6 },
   section: { fontSize: 15, fontWeight: '700', color: C.dark, marginTop: 10, marginBottom: 12 },
   chartCard: { backgroundColor: C.card, borderRadius: 12, padding: 14, marginVertical: 8 },
-  chartArea: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', height: 110 },
+  chartArea: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    height: 110,
+  },
   barCol: { alignItems: 'center', flex: 1 },
   bar: { width: 26, backgroundColor: C.navy, borderRadius: 4 },
   barLabel: { fontSize: 11, color: C.muted, marginTop: 6 },
-  pieRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.card, borderRadius: 12, padding: 16 },
-  donut: { width: 90, height: 90, borderRadius: 45, borderWidth: 18, borderColor: C.navy, borderRightColor: C.accent, borderBottomColor: '#3b82f6' },
+  pieRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: C.card,
+    borderRadius: 12,
+    padding: 16,
+  },
+  donut: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 18,
+    borderColor: C.navy,
+    borderRightColor: C.accent,
+    borderBottomColor: '#3b82f6',
+  },
   legendRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   legendDot: { width: 12, height: 12, borderRadius: 3, marginRight: 8 },
   legendTxt: { fontSize: 13, color: C.dark },

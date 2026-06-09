@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
@@ -12,18 +12,25 @@ const STATS = [
 ];
 
 const ACOES = [
-  { t: 'Cadastrar livro', color: C.navy, to: 'cadastro' },
-  { t: 'Registrar emprestimo', color: '#2eb86b', to: 'registrar' },
-  { t: 'Registrar devolucao', color: '#ff8c1a', to: null },
+  { t: 'Cadastrar livro', icon: '📖', color: C.navy, to: 'cadastro' },
+  { t: 'Registrar emprestimo', icon: '📤', color: '#2eb86b', to: 'registrar' },
+  { t: 'Registrar devolucao', icon: '📥', color: '#ff8c1a', to: 'devolucao' },
 ];
 
-export default function DashBib({ nav }) {
+export default function DashBib({ nav, user }) {
+  const nome = user?.name || 'Bibliotecario';
+  const org = user?.org || 'Biblioteca';
+
+  const handleMenu = () => {
+    Alert.alert('Menu', 'Menu lateral em desenvolvimento.');
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title="Biblioteca do Bairro" right="☰" />
+      <TopBar title={org} right="☰" onRightPress={handleMenu} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <Text style={styles.hi}>Ola, Carlos!</Text>
-        <Text style={styles.sub}>Biblioteca do Bairro</Text>
+        <Text style={styles.hi}>Ola, {nome}!</Text>
+        <Text style={styles.sub}>{org}</Text>
         <View style={styles.grid}>
           {STATS.map((s, i) => (
             <View key={i} style={[styles.statCard, { backgroundColor: s.tint }]}>
@@ -37,13 +44,16 @@ export default function DashBib({ nav }) {
           <TouchableOpacity
             key={i}
             style={[styles.action, { backgroundColor: a.color }]}
-            onPress={() => a.to && nav.navigate(a.to)}
+            onPress={() => nav.navigate(a.to)}
+            accessibilityLabel={a.t}
+            activeOpacity={0.8}
           >
+            <Text style={styles.actionIcon}>{a.icon}</Text>
             <Text style={styles.actionTxt}>{a.t}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <BottomNav active="home" nav={nav} />
+      <BottomNav active="home" nav={nav} role="bibliotecario" />
     </View>
   );
 }
@@ -59,9 +69,11 @@ const styles = StyleSheet.create({
   action: {
     borderRadius: 12,
     height: 54,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 12,
   },
+  actionIcon: { fontSize: 20, marginRight: 12 },
   actionTxt: { fontSize: 15, fontWeight: '700', color: '#fff' },
 });

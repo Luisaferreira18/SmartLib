@@ -2,20 +2,38 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { C } from '../theme';
 
-const ITEMS = [
-  { key: 'home', label: 'Home', icon: '⌂', to: 'home' },
-  { key: 'buscar', label: 'Buscar', icon: '⌕', to: 'catalogo' },
-  { key: 'emprestimos', label: 'Emprestimos', icon: '≣', to: 'emprestimos' },
-  { key: 'perfil', label: 'Perfil', icon: '☻', to: 'perfil' },
-];
+const NAV = {
+  usuario: [
+    { key: 'home', label: 'Home', icon: '⌂', to: 'home' },
+    { key: 'buscar', label: 'Buscar', icon: '⌕', to: 'catalogo' },
+    { key: 'emprestimos', label: 'Emprestimos', icon: '≣', to: 'emprestimos' },
+    { key: 'perfil', label: 'Perfil', icon: '☻', to: 'perfil' },
+  ],
+  bibliotecario: [
+    { key: 'home', label: 'Dashboard', icon: '⌂', to: 'dashBib' },
+    { key: 'cadastro', label: 'Cadastrar', icon: '＋', to: 'cadastro' },
+    { key: 'registrar', label: 'Emprestar', icon: '↗', to: 'registrar' },
+    { key: 'devolucao', label: 'Devolver', icon: '↙', to: 'devolucao' },
+  ],
+  gestor: [
+    { key: 'home', label: 'Dashboard', icon: '⌂', to: 'dashGer' },
+    { key: 'perfil', label: 'Perfil', icon: '☻', to: 'perfil' },
+  ],
+};
 
-export default function BottomNav({ active, nav }) {
+export default function BottomNav({ active, nav, role = 'usuario' }) {
+  const items = NAV[role] || NAV.usuario;
   return (
     <View style={styles.nav}>
-      {ITEMS.map((it) => {
+      {items.map((it) => {
         const on = active === it.key;
         return (
-          <TouchableOpacity key={it.key} style={styles.item} onPress={() => nav.reset(it.to)}>
+          <TouchableOpacity
+            key={it.key}
+            style={styles.item}
+            onPress={() => nav.reset(it.to)}
+            accessibilityLabel={it.label}
+          >
             <Text style={[styles.icon, on && { color: C.accent }]}>{it.icon}</Text>
             <Text style={[styles.label, on && styles.labelOn]}>{it.label}</Text>
           </TouchableOpacity>

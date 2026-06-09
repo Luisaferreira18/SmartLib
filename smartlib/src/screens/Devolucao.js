@@ -5,10 +5,9 @@ import TopBar from '../components/TopBar';
 import Field from '../components/Field';
 import { AccentButton, TextButton } from '../components/Button';
 
-export default function Registrar({ nav }) {
+export default function Devolucao({ nav }) {
   const [usuario, setUsuario] = useState('');
   const [livro, setLivro] = useState('');
-  const [dataEmp, setDataEmp] = useState('');
   const [dataDev, setDataDev] = useState('');
   const [erros, setErros] = useState({});
 
@@ -18,7 +17,6 @@ export default function Registrar({ nav }) {
     const e = {};
     if (!usuario.trim()) e.usuario = 'Nome do usuario obrigatorio';
     if (!livro.trim()) e.livro = 'Titulo ou ISBN do livro obrigatorio';
-    if (!dataEmp.trim()) e.dataEmp = 'Data de emprestimo obrigatoria';
     if (!dataDev.trim()) e.dataDev = 'Data de devolucao obrigatoria';
     setErros(e);
     return Object.keys(e).length === 0;
@@ -27,19 +25,25 @@ export default function Registrar({ nav }) {
   const handleConfirmar = () => {
     if (!validar()) return;
     Alert.alert(
-      'Emprestimo registrado!',
-      `Livro "${livro}" registrado para "${usuario}".\nDevolucao prevista: ${dataDev}.`,
+      'Devolucao registrada!',
+      `O livro "${livro}" foi devolvido por "${usuario}" em ${dataDev}.`,
       [{ text: 'OK', onPress: nav.goBack }]
     );
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: C.card }}>
-      <TopBar title="Registrar emprestimo" onBack={nav.goBack} />
+      <TopBar title="Registrar devolucao" onBack={nav.goBack} />
       <ScrollView
         contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
         keyboardShouldPersistTaps="handled"
       >
+        <View style={styles.infoBox}>
+          <Text style={styles.infoTxt}>
+            Registre a devolucao informando o usuario e o livro devolvido.
+          </Text>
+        </View>
+
         <Field
           label="Usuario *"
           placeholder="Buscar usuario pelo nome ou CPF"
@@ -57,16 +61,7 @@ export default function Registrar({ nav }) {
         {erros.livro ? <Text style={styles.erro}>{erros.livro}</Text> : null}
 
         <Field
-          label="Data do emprestimo *"
-          placeholder="DD/MM/AAAA"
-          value={dataEmp}
-          onChangeText={(t) => { setDataEmp(t); limparErro('dataEmp'); }}
-          keyboardType="numeric"
-        />
-        {erros.dataEmp ? <Text style={styles.erro}>{erros.dataEmp}</Text> : null}
-
-        <Field
-          label="Data de devolucao prevista *"
+          label="Data de devolucao *"
           placeholder="DD/MM/AAAA"
           value={dataDev}
           onChangeText={(t) => { setDataDev(t); limparErro('dataDev'); }}
@@ -74,8 +69,12 @@ export default function Registrar({ nav }) {
         />
         {erros.dataDev ? <Text style={styles.erro}>{erros.dataDev}</Text> : null}
 
-        <AccentButton onPress={handleConfirmar} accessibilityLabel="Confirmar emprestimo">
-          Confirmar emprestimo
+        <AccentButton
+          onPress={handleConfirmar}
+          accessibilityLabel="Confirmar devolucao"
+          style={{ backgroundColor: '#ff8c1a' }}
+        >
+          Confirmar devolucao
         </AccentButton>
         <TextButton onPress={nav.goBack} accessibilityLabel="Cancelar">
           Cancelar
@@ -86,5 +85,14 @@ export default function Registrar({ nav }) {
 }
 
 const styles = StyleSheet.create({
+  infoBox: {
+    backgroundColor: '#fff7ed',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 20,
+    borderLeftWidth: 3,
+    borderLeftColor: '#ff8c1a',
+  },
+  infoTxt: { fontSize: 13, color: '#92400e', lineHeight: 18 },
   erro: { color: '#b91c1c', fontSize: 12, marginTop: -12, marginBottom: 10 },
 });

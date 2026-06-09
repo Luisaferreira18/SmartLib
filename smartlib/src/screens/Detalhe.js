@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Alert, Share } from 'react-native';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
@@ -7,11 +7,55 @@ import Badge from '../components/Badge';
 import Cover from '../components/Cover';
 import { PrimaryButton, GhostButton } from '../components/Button';
 
-export default function Detalhe({ nav, params }) {
+export default function Detalhe({ nav, params, user }) {
   const b = (params && params.book) || { t: 'O Pequeno Principe', a: 'Antoine de Saint-Exupery' };
+  const [favorito, setFavorito] = useState(false);
+  const [reservado, setReservado] = useState(false);
+
+  const handleReservar = () => {
+    if (reservado) {
+      Alert.alert('Ja reservado', 'Voce ja possui uma reserva para este livro.');
+      return;
+    }
+    Alert.alert(
+      'Confirmar reserva',
+      `Deseja reservar "${b.t}"?\n\nVoce tera 3 dias uteis para retirada.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Reservar',
+          onPress: () => {
+            setReservado(true);
+            Alert.alert('Reserva confirmada!', 'Retire o livro em ate 3 dias uteis na biblioteca.');
+          },
+        },
+      ]
+    );
+  };
+
+  const handleFavoritar = () => {
+    setFavorito((prev) => !prev);
+  };
+
+  const handleCompartilhar = async () => {
+    try {
+      await Share.share({
+        message: `Estou lendo "${b.t}" de ${b.a} na SmartLib! Baixe o app e explore nossa biblioteca.`,
+        title: 'SmartLib',
+      });
+    } catch {
+      // compartilhamento cancelado
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title="" onBack={nav.goBack} right="Compartilhar" />
+      <TopBar
+        title=""
+        onBack={nav.goBack}
+        right="Compartilhar"
+        onRightPress={handleCompartilhar}
+      />
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 110 }}>
         <View style={{ flexDirection: 'row' }}>
           <Cover w={130} h={178} label="LIVRO" big />
@@ -30,11 +74,11 @@ export default function Detalhe({ nav, params }) {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View>
             <Text style={styles.metaLabel}>Categoria</Text>
-            <Text style={styles.metaValue}>Infantil</Text>
+            <Text style={styles.metaValue}>Literatura</Text>
           </View>
           <View>
             <Text style={styles.metaLabel}>Editora</Text>
-            <Text style={styles.metaValue}>Agir</Text>
+            <Text style={styles.metaValue}>Companhia</Text>
           </View>
           <View>
             <Text style={styles.metaLabel}>Ano</Text>
@@ -45,13 +89,24 @@ export default function Detalhe({ nav, params }) {
         <Text style={[styles.metaLabel, { marginTop: 22 }]}>Descricao</Text>
         <Text style={styles.desc}>
           Uma linda fabula sobre amizade, amor e descobertas. Uma historia atemporal que encanta
-          leitores de todas as idades.
+          leitores de todas as idades ao redor do mundo.
         </Text>
 
-        <PrimaryButton>Reservar</PrimaryButton>
-        <GhostButton>Favoritar</GhostButton>
+        <PrimaryButton
+          onPress={handleReservar}
+          accessibilityLabel={reservado ? 'Livro ja reservado' : 'Reservar livro'}
+          style={reservado ? { backgroundColor: '#2eb86b' } : {}}
+        >
+          {reservado ? '✓ Reservado' : 'Reservar'}
+        </PrimaryButton>
+        <GhostButton
+          onPress={handleFavoritar}
+          accessibilityLabel={favorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+        >
+          {favorito ? '♥  Favoritado' : '♡  Favoritar'}
+        </GhostButton>
       </ScrollView>
-      <BottomNav active="buscar" nav={nav} />
+      <BottomNav active="buscar" nav={nav} role="usuario" />
     </View>
   );
 }

@@ -1,11 +1,11 @@
 /* Dados mock do protótipo */
 
 export const CATALOGO = [
-  { t: 'Dom Casmurro', a: 'Machado de Assis', s: 'Disponivel', k: 'ok' },
-  { t: '1984', a: 'George Orwell', s: 'Disponivel', k: 'ok' },
-  { t: 'O Pequeno Principe', a: 'A. de Saint-Exupery', s: 'Poucas unidades', k: 'warn' },
-  { t: 'A Revolucao dos Bichos', a: 'George Orwell', s: 'Disponivel', k: 'ok' },
-  { t: 'Memorias Postumas', a: 'Machado de Assis', s: 'Devolvido', k: 'neutral' },
+  { t: 'Dom Casmurro', a: 'Machado de Assis', s: 'Disponivel', k: 'ok', cat: 'Literatura' },
+  { t: '1984', a: 'George Orwell', s: 'Disponivel', k: 'ok', cat: 'Literatura' },
+  { t: 'O Pequeno Principe', a: 'A. de Saint-Exupery', s: 'Poucas unidades', k: 'warn', cat: 'Infantil' },
+  { t: 'A Revolucao dos Bichos', a: 'George Orwell', s: 'Disponivel', k: 'ok', cat: 'Literatura' },
+  { t: 'Memorias Postumas', a: 'Machado de Assis', s: 'Indisponivel', k: 'neutral', cat: 'Literatura' },
 ];
 
 export const ATIVOS = [

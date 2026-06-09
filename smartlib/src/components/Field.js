@@ -2,8 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { C } from '../theme';
 
-export default function Field({ label, placeholder, value, secure }) {
-  const [v, setV] = useState(value || '');
+export default function Field({
+  label,
+  placeholder,
+  value,
+  onChangeText,
+  secure,
+  keyboardType,
+  accessibilityLabel,
+}) {
+  const [internal, setInternal] = useState(value || '');
+  const controlled = onChangeText !== undefined;
   return (
     <View style={{ marginBottom: 18 }}>
       {label ? <Text style={styles.label}>{label}</Text> : null}
@@ -11,9 +20,12 @@ export default function Field({ label, placeholder, value, secure }) {
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor={C.muted}
-        value={v}
-        onChangeText={setV}
-        secureTextEntry={secure}
+        value={controlled ? value : internal}
+        onChangeText={controlled ? onChangeText : setInternal}
+        secureTextEntry={!!secure}
+        keyboardType={keyboardType || 'default'}
+        autoCapitalize="none"
+        accessibilityLabel={accessibilityLabel || label || placeholder}
       />
     </View>
   );
