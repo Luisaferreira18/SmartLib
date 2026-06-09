@@ -33,7 +33,11 @@ export default function DashGer({ nav, user }) {
   const org = user?.org || 'Fundacao Municipal de Cultura';
 
   const handleMenu = () => {
-    Alert.alert('Menu', 'Menu lateral em desenvolvimento.');
+    Alert.alert('Menu', null, [
+      { text: '📊 Exportar relatorio', onPress: handleExportar },
+      { text: '👤 Perfil', onPress: () => nav.navigate('perfil') },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
   };
 
   const handleExportar = () => {

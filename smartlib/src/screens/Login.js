@@ -34,9 +34,7 @@ export default function Login({ nav, setUser }) {
     nav.reset(r.to);
   };
 
-  const handleCriarConta = () => {
-    Alert.alert('Em breve', 'Cadastro de novos usuarios sera liberado em breve.');
-  };
+  const handleCriarConta = () => nav.navigate('criarConta');
 
   const limparErro = () => setErro('');
 
@@ -73,7 +71,12 @@ export default function Login({ nav, setUser }) {
 
       {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
-      <Text style={styles.forgot}>Esqueci minha senha</Text>
+      <TouchableOpacity
+        onPress={() => Alert.alert('Recuperar senha', 'Entre em contato com sua biblioteca ou acesse o portal: smartlib.com.br/recuperar')}
+        accessibilityLabel="Esqueci minha senha"
+      >
+        <Text style={styles.forgot}>Esqueci minha senha</Text>
+      </TouchableOpacity>
 
       <PrimaryButton onPress={handleEntrar} accessibilityLabel="Entrar">Entrar</PrimaryButton>
       <GhostButton onPress={handleCriarConta} accessibilityLabel="Criar conta">Criar conta</GhostButton>

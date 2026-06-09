@@ -25,7 +25,10 @@ export default function Perfil({ nav, user }) {
   const role = user?.role || 'usuario';
 
   const handleItem = (action) => {
-    Alert.alert('Em breve', MSGS[action]);
+    if (action === 'edit') return nav.navigate('editarPerfil');
+    if (action === 'notif') return nav.navigate('notificacoes');
+    if (action === 'senha') return nav.navigate('alterarSenha');
+    if (action === 'ajuda') return Alert.alert('Ajuda e suporte', MSGS.ajuda);
   };
 
   const handleSair = () => {

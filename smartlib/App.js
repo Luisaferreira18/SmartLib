@@ -15,6 +15,10 @@ import Cadastro from './src/screens/Cadastro';
 import Registrar from './src/screens/Registrar';
 import Devolucao from './src/screens/Devolucao';
 import DashGer from './src/screens/DashGer';
+import CriarConta from './src/screens/CriarConta';
+import EditarPerfil from './src/screens/EditarPerfil';
+import Notificacoes from './src/screens/Notificacoes';
+import AlterarSenha from './src/screens/AlterarSenha';
 
 const SCREENS = {
   splash: Splash,
@@ -30,6 +34,10 @@ const SCREENS = {
   registrar: Registrar,
   devolucao: Devolucao,
   dashGer: DashGer,
+  criarConta: CriarConta,
+  editarPerfil: EditarPerfil,
+  notificacoes: Notificacoes,
+  alterarSenha: AlterarSenha,
 };
 
 export default function App() {

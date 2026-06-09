@@ -22,7 +22,12 @@ export default function DashBib({ nav, user }) {
   const org = user?.org || 'Biblioteca';
 
   const handleMenu = () => {
-    Alert.alert('Menu', 'Menu lateral em desenvolvimento.');
+    Alert.alert('Menu', null, [
+      { text: '📖 Cadastrar livro', onPress: () => nav.navigate('cadastro') },
+      { text: '📤 Registrar emprestimo', onPress: () => nav.navigate('registrar') },
+      { text: '📥 Registrar devolucao', onPress: () => nav.navigate('devolucao') },
+      { text: 'Cancelar', style: 'cancel' },
+    ]);
   };
 
   return (
