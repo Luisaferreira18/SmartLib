@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { C } from '../theme';
+import { C, SHADOW } from '../theme';
 import { ATIVOS, HIST } from '../data';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
@@ -73,7 +73,7 @@ export default function Emprestimos({ nav, user }) {
             ATIVOS.map((b, i) => (
               <View key={i} style={styles.card}>
                 <View style={{ flexDirection: 'row' }}>
-                  <Cover w={56} h={74} />
+                  <Cover w={56} h={74} label={b.t} />
                   <View style={{ flex: 1, marginLeft: 14 }}>
                     <Text style={styles.title}>{b.t}</Text>
                     <Text style={styles.author}>{b.a}</Text>
@@ -113,7 +113,7 @@ export default function Emprestimos({ nav, user }) {
             HIST.map((b, i) => (
               <View key={i} style={[styles.card, styles.cardHist]}>
                 <View style={{ flexDirection: 'row' }}>
-                  <Cover w={56} h={74} />
+                  <Cover w={56} h={74} label={b.t} />
                   <View style={{ flex: 1, marginLeft: 14 }}>
                     <Text style={styles.title}>{b.t}</Text>
                     <Text style={styles.author}>{b.a}</Text>
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   tabTxt: { fontSize: 14, color: C.muted },
   tabTxtOn: { color: C.navy, fontWeight: '700' },
   tabUnderline: { height: 3, backgroundColor: C.accent, width: '100%', marginTop: 8, borderRadius: 2 },
-  card: { backgroundColor: C.card, borderRadius: 14, padding: 14, marginBottom: 14 },
+  card: { backgroundColor: C.card, borderRadius: 14, padding: 14, marginBottom: 14, ...SHADOW.sm },
   cardHist: { borderLeftWidth: 4, borderLeftColor: C.navy },
   title: { fontSize: 15, fontWeight: '700', color: C.dark },
   author: { fontSize: 13, color: C.muted, marginTop: 2 },

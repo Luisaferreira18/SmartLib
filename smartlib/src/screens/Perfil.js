@@ -1,22 +1,16 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { C, BADGE } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 
 const ITEMS = [
-  { label: 'Editar perfil', icon: '✏️', action: 'edit' },
-  { label: 'Notificacoes', icon: '🔔', action: 'notif' },
-  { label: 'Alterar senha', icon: '🔒', action: 'senha' },
-  { label: 'Ajuda e suporte', icon: '❓', action: 'ajuda' },
+  { label: 'Editar perfil', icon: 'pencil-outline', action: 'edit' },
+  { label: 'Notificacoes', icon: 'notifications-outline', action: 'notif' },
+  { label: 'Alterar senha', icon: 'lock-closed-outline', action: 'senha' },
+  { label: 'Ajuda e suporte', icon: 'help-circle-outline', action: 'ajuda' },
 ];
-
-const MSGS = {
-  edit: 'Edicao de perfil sera disponibilizada em breve.',
-  notif: 'Configuracoes de notificacoes em breve.',
-  senha: 'Alteracao de senha em breve.',
-  ajuda: 'Entre em contato: suporte@smartlib.com.br',
-};
 
 export default function Perfil({ nav, user }) {
   const nome = user?.name || 'Usuario';
@@ -28,7 +22,7 @@ export default function Perfil({ nav, user }) {
     if (action === 'edit') return nav.navigate('editarPerfil');
     if (action === 'notif') return nav.navigate('notificacoes');
     if (action === 'senha') return nav.navigate('alterarSenha');
-    if (action === 'ajuda') return Alert.alert('Ajuda e suporte', MSGS.ajuda);
+    if (action === 'ajuda') return Alert.alert('Ajuda e suporte', 'Entre em contato: suporte@smartlib.com.br');
   };
 
   const handleSair = () => {
@@ -57,21 +51,23 @@ export default function Perfil({ nav, user }) {
               style={styles.row}
               onPress={() => handleItem(it.action)}
               accessibilityLabel={it.label}
+              activeOpacity={0.7}
             >
               <View style={styles.rowLeft}>
-                <Text style={styles.rowIcon}>{it.icon}</Text>
+                <Ionicons name={it.icon} size={20} color={C.navy} style={styles.rowIcon} />
                 <Text style={styles.rowTxt}>{it.label}</Text>
               </View>
-              <Text style={styles.chev}>›</Text>
+              <Ionicons name="chevron-forward" size={18} color={C.muted} />
             </TouchableOpacity>
           ))}
           <TouchableOpacity
             style={styles.row}
             onPress={handleSair}
             accessibilityLabel="Sair da conta"
+            activeOpacity={0.7}
           >
             <View style={styles.rowLeft}>
-              <Text style={styles.rowIcon}>🚪</Text>
+              <Ionicons name="log-out-outline" size={20} color={BADGE.danger.fg} style={styles.rowIcon} />
               <Text style={[styles.rowTxt, { color: BADGE.danger.fg }]}>Sair da conta</Text>
             </View>
           </TouchableOpacity>
@@ -105,7 +101,6 @@ const styles = StyleSheet.create({
     borderBottomColor: C.line,
   },
   rowLeft: { flexDirection: 'row', alignItems: 'center' },
-  rowIcon: { fontSize: 20, marginRight: 14 },
+  rowIcon: { marginRight: 14 },
   rowTxt: { fontSize: 15, color: C.dark },
-  chev: { fontSize: 24, color: C.muted },
 });

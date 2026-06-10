@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { C } from '../theme';
 
 export default function TopBar({ title, onBack, right, onRightPress, bellCount, onBellPress }) {
@@ -7,7 +8,7 @@ export default function TopBar({ title, onBack, right, onRightPress, bellCount, 
     <View style={styles.topbar}>
       {onBack ? (
         <TouchableOpacity onPress={onBack} style={styles.back} accessibilityLabel="Voltar" activeOpacity={0.7}>
-          <Text style={styles.backTxt}>‹</Text>
+          <Ionicons name="chevron-back" size={26} color={C.navy} />
         </TouchableOpacity>
       ) : (
         <View style={{ width: 28 }} />
@@ -18,7 +19,7 @@ export default function TopBar({ title, onBack, right, onRightPress, bellCount, 
       <View style={styles.rightArea}>
         {onBellPress != null ? (
           <TouchableOpacity onPress={onBellPress} style={styles.bell} accessibilityLabel="Notificacoes" activeOpacity={0.7}>
-            <Text style={styles.bellIcon}>🔔</Text>
+            <Ionicons name="notifications-outline" size={22} color={C.dark} />
             {bellCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeTxt}>{bellCount > 9 ? '9+' : String(bellCount)}</Text>
@@ -50,13 +51,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: C.line,
   },
-  back: { width: 28 },
-  backTxt: { fontSize: 30, color: C.navy, lineHeight: 32 },
+  back: { width: 28, alignItems: 'center' },
   title: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: C.navy },
   rightArea: { flexDirection: 'row', alignItems: 'center', minWidth: 28, justifyContent: 'flex-end' },
   right: { color: C.link, fontSize: 13 },
-  bell: { marginRight: 8, position: 'relative' },
-  bellIcon: { fontSize: 20 },
+  bell: { marginRight: 6, position: 'relative' },
   badge: {
     position: 'absolute',
     top: -4,

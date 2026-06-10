@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import { C } from '../theme';
+import { Ionicons } from '@expo/vector-icons';
+import { C, SHADOW } from '../theme';
 import { CATALOGO } from '../data';
 import BottomNav from '../components/BottomNav';
 import Badge from '../components/Badge';
@@ -29,7 +30,7 @@ export default function Catalogo({ nav, user }) {
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <View style={styles.searchBox}>
-        <Text style={styles.searchIcon}>⌕</Text>
+        <Ionicons name="search-outline" size={18} color={C.muted} style={{ marginRight: 8 }} />
         <TextInput
           style={styles.searchInput}
           placeholder="Buscar livros, autores..."
@@ -41,8 +42,8 @@ export default function Catalogo({ nav, user }) {
           returnKeyType="search"
         />
         {busca.length > 0 && (
-          <TouchableOpacity onPress={() => setBusca('')} accessibilityLabel="Limpar busca">
-            <Text style={styles.clearBtn}>✕</Text>
+          <TouchableOpacity onPress={() => setBusca('')} accessibilityLabel="Limpar busca" activeOpacity={0.7}>
+            <Ionicons name="close-circle" size={18} color={C.muted} />
           </TouchableOpacity>
         )}
       </View>
@@ -55,6 +56,7 @@ export default function Catalogo({ nav, user }) {
               onPress={() => setFiltro(x)}
               style={[styles.chip, on && styles.chipOn]}
               accessibilityLabel={x}
+              activeOpacity={0.7}
             >
               <Text style={[styles.chipTxt, on && { color: '#fff' }]}>{x}</Text>
             </TouchableOpacity>
@@ -64,7 +66,6 @@ export default function Catalogo({ nav, user }) {
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 100 }}>
         {lista.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>📚</Text>
             <Text style={styles.emptyTitle}>Nenhum livro encontrado</Text>
             <Text style={styles.emptyDesc}>Tente outros termos ou remova os filtros.</Text>
           </View>
@@ -72,18 +73,18 @@ export default function Catalogo({ nav, user }) {
           lista.map((b, i) => (
             <TouchableOpacity
               key={i}
-              style={styles.row}
+              style={[styles.row, SHADOW.sm]}
               onPress={() => nav.navigate('detalhe', { book: b })}
               accessibilityLabel={b.t}
               activeOpacity={0.75}
             >
-              <Cover />
+              <Cover label={b.t} />
               <View style={{ flex: 1, marginLeft: 14 }}>
                 <Text style={styles.title}>{b.t}</Text>
                 <Text style={styles.author}>{b.a}</Text>
                 <Badge kind={b.k}>{b.s}</Badge>
               </View>
-              <Text style={styles.chev}>›</Text>
+              <Ionicons name="chevron-forward" size={18} color={C.muted} style={{ marginLeft: 8 }} />
             </TouchableOpacity>
           ))
         )}
@@ -103,9 +104,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: C.line,
   },
-  searchIcon: { fontSize: 18, color: C.muted, marginRight: 8 },
   searchInput: { flex: 1, fontSize: 14, color: C.dark },
-  clearBtn: { fontSize: 14, color: C.muted, paddingHorizontal: 8 },
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -134,9 +133,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 15, fontWeight: '700', color: C.dark },
   author: { fontSize: 13, color: C.muted, marginTop: 2, marginBottom: 8 },
-  chev: { fontSize: 22, color: C.muted, marginLeft: 8 },
   empty: { alignItems: 'center', paddingTop: 60 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
   emptyTitle: { fontSize: 16, fontWeight: '700', color: C.dark },
   emptyDesc: { fontSize: 13, color: C.muted, marginTop: 6, textAlign: 'center' },
 });

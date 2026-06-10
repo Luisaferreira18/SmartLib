@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import { C, SHADOW } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
@@ -29,6 +30,43 @@ const CATS = [
   { l: 'Outros (15%)', c: '#9ca3af', pct: 0.15 },
 ];
 
+function polar(cx, cy, r, angleDeg) {
+  const rad = ((angleDeg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function DonutChart({ data, size = 96, strokeWidth = 20 }) {
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = (size - strokeWidth) / 2;
+  let cumAngle = 0;
+  const paths = [];
+
+  data.forEach((d, i) => {
+    const span = d.pct * 360;
+    const startAngle = cumAngle;
+    const endAngle = cumAngle + span - (span < 360 ? 1.5 : 0);
+    cumAngle += span;
+
+    const start = polar(cx, cy, r, startAngle);
+    const end = polar(cx, cy, r, endAngle);
+    const large = span > 180 ? 1 : 0;
+
+    paths.push(
+      <Path
+        key={i}
+        d={`M ${start.x} ${start.y} A ${r} ${r} 0 ${large} 1 ${end.x} ${end.y}`}
+        fill="none"
+        stroke={d.c}
+        strokeWidth={strokeWidth}
+        strokeLinecap="butt"
+      />
+    );
+  });
+
+  return <Svg width={size} height={size}>{paths}</Svg>;
+}
+
 export default function DashGer({ nav, user }) {
   const nome = user?.name || 'Gestor';
   const org = user?.org || 'Fundacao Municipal de Cultura';
@@ -47,7 +85,13 @@ export default function DashGer({ nav, user }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title="Dashboard Gerencial" right="☰" onRightPress={() => setMenuOpen(true)} bellCount={2} onBellPress={() => nav.navigate('notificacoes')} />
+      <TopBar
+        title="Dashboard Gerencial"
+        right="☰"
+        onRightPress={() => setMenuOpen(true)}
+        bellCount={2}
+        onBellPress={() => nav.navigate('notificacoes')}
+      />
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
         <Text style={styles.hi}>Ola, {nome}!</Text>
         <Text style={styles.sub}>{org}</Text>
@@ -73,7 +117,17 @@ export default function DashGer({ nav, user }) {
         </View>
 
         <Text style={[styles.section, { marginTop: 16 }]}>Categorias mais populares</Text>
-        <DonutLegend cats={CATS} />
+        <View style={[styles.pieRow, SHADOW.sm]}>
+          <DonutChart data={CATS} size={96} strokeWidth={20} />
+          <View style={{ flex: 1, marginLeft: 18 }}>
+            {CATS.map((c) => (
+              <View key={c.l} style={styles.legendRow}>
+                <View style={[styles.legendDot, { backgroundColor: c.c }]} />
+                <Text style={styles.legendTxt}>{c.l}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
 
         <PrimaryButton
           style={{ marginTop: 24 }}
@@ -96,22 +150,6 @@ export default function DashGer({ nav, user }) {
         title="Escolha o formato"
         options={EXPORT_OPTIONS}
       />
-    </View>
-  );
-}
-
-function DonutLegend({ cats }) {
-  return (
-    <View style={[styles.pieRow, SHADOW.sm]}>
-      <View style={styles.donut} />
-      <View style={{ flex: 1, marginLeft: 18 }}>
-        {cats.map((c) => (
-          <View key={c.l} style={styles.legendRow}>
-            <View style={[styles.legendDot, { backgroundColor: c.c }]} />
-            <Text style={styles.legendTxt}>{c.l}</Text>
-          </View>
-        ))}
-      </View>
     </View>
   );
 }
@@ -140,15 +178,6 @@ const styles = StyleSheet.create({
     backgroundColor: C.card,
     borderRadius: 12,
     padding: 16,
-  },
-  donut: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    borderWidth: 18,
-    borderColor: C.navy,
-    borderRightColor: C.accent,
-    borderBottomColor: C.blue,
   },
   legendRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   legendDot: { width: 12, height: 12, borderRadius: 3, marginRight: 8 },

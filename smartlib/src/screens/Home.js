@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { C, SHADOW } from '../theme';
 import BottomNav from '../components/BottomNav';
 
@@ -26,7 +27,7 @@ export default function Home({ nav, user }) {
             accessibilityLabel="Notificacoes"
             activeOpacity={0.7}
           >
-            <Text style={styles.bellIcon}>🔔</Text>
+            <Ionicons name="notifications-outline" size={24} color="#fff" />
             <View style={styles.bellBadge}>
               <Text style={styles.bellBadgeTxt}>2</Text>
             </View>
@@ -39,7 +40,10 @@ export default function Home({ nav, user }) {
         activeOpacity={0.7}
         accessibilityLabel="Buscar livros"
       >
-        <Text style={styles.searchTxt}>⌕  Buscar livros, autores...</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Ionicons name="search-outline" size={16} color={C.muted} style={{ marginRight: 8 }} />
+          <Text style={styles.searchTxt}>Buscar livros, autores...</Text>
+        </View>
       </TouchableOpacity>
       <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 8, paddingBottom: 100 }}>
         {CARDS.map((c, i) => (
