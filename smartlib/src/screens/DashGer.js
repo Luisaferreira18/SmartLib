@@ -1,14 +1,15 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
-import { C } from '../theme';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { C, SHADOW } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
+import BottomSheet from '../components/BottomSheet';
 import { PrimaryButton } from '../components/Button';
 
 const STATS = [
   { v: '12.560', l: 'Emprestimos (total)', tint: C.blueT },
   { v: '5.421', l: 'Usuarios ativos', tint: C.greenT },
-  { v: '18.230', l: 'Livros no sistema', tint: '#fee2e2' },
+  { v: '18.230', l: 'Livros no sistema', tint: C.dangerT },
   { v: '32', l: 'Bibliotecas ativas', tint: C.yellowT },
 ];
 
@@ -22,54 +23,44 @@ const BARS = [
 ];
 
 const CATS = [
-  { l: 'Literatura (42%)', c: C.navy },
-  { l: 'Infantil (25%)', c: C.accent },
-  { l: 'Didaticos (20%)', c: '#3b82f6' },
-  { l: 'Outros (15%)', c: '#9ca3af' },
+  { l: 'Literatura (42%)', c: C.navy, pct: 0.42 },
+  { l: 'Infantil (25%)', c: C.accent, pct: 0.25 },
+  { l: 'Didaticos (20%)', c: C.blue, pct: 0.20 },
+  { l: 'Outros (15%)', c: '#9ca3af', pct: 0.15 },
 ];
 
 export default function DashGer({ nav, user }) {
   const nome = user?.name || 'Gestor';
   const org = user?.org || 'Fundacao Municipal de Cultura';
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
-  const handleMenu = () => {
-    Alert.alert('Menu', null, [
-      { text: '📊 Exportar relatorio', onPress: handleExportar },
-      { text: '👤 Perfil', onPress: () => nav.navigate('perfil') },
-      { text: 'Cancelar', style: 'cancel' },
-    ]);
-  };
+  const MENU_OPTIONS = [
+    { label: 'Exportar relatorio', icon: '📊', onPress: () => setExportOpen(true) },
+    { label: 'Perfil', icon: '👤', onPress: () => nav.navigate('perfil') },
+  ];
 
-  const handleExportar = () => {
-    Alert.alert('Exportar relatorio', 'Escolha o formato de exportacao:', [
-      {
-        text: 'PDF',
-        onPress: () => Alert.alert('Relatorio PDF', 'Relatorio gerado com sucesso!'),
-      },
-      {
-        text: 'Excel',
-        onPress: () => Alert.alert('Relatorio Excel', 'Relatorio gerado com sucesso!'),
-      },
-      { text: 'Cancelar', style: 'cancel' },
-    ]);
-  };
+  const EXPORT_OPTIONS = [
+    { label: 'Exportar como PDF', icon: '📄', onPress: () => {} },
+    { label: 'Exportar como Excel', icon: '📊', onPress: () => {} },
+  ];
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title="Dashboard Gerencial" right="☰" onRightPress={handleMenu} />
+      <TopBar title="Dashboard Gerencial" right="☰" onRightPress={() => setMenuOpen(true)} />
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
         <Text style={styles.hi}>Ola, {nome}!</Text>
         <Text style={styles.sub}>{org}</Text>
         <View style={styles.grid}>
           {STATS.map((s, i) => (
-            <View key={i} style={[styles.statCard, { backgroundColor: s.tint }]}>
+            <View key={i} style={[styles.statCard, { backgroundColor: s.tint }, SHADOW.sm]}>
               <Text style={styles.statValue}>{s.v}</Text>
               <Text style={styles.statLabel}>{s.l}</Text>
             </View>
           ))}
         </View>
 
-        <View style={styles.chartCard}>
+        <View style={[styles.chartCard, SHADOW.sm]}>
           <Text style={styles.section}>Emprestimos por mes</Text>
           <View style={styles.chartArea}>
             {BARS.map((b) => (
@@ -82,27 +73,45 @@ export default function DashGer({ nav, user }) {
         </View>
 
         <Text style={[styles.section, { marginTop: 16 }]}>Categorias mais populares</Text>
-        <View style={styles.pieRow}>
-          <View style={styles.donut} />
-          <View style={{ flex: 1, marginLeft: 18 }}>
-            {CATS.map((c) => (
-              <View key={c.l} style={styles.legendRow}>
-                <View style={[styles.legendDot, { backgroundColor: c.c }]} />
-                <Text style={styles.legendTxt}>{c.l}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
+        <DonutLegend cats={CATS} />
 
         <PrimaryButton
           style={{ marginTop: 24 }}
-          onPress={handleExportar}
+          onPress={() => setExportOpen(true)}
           accessibilityLabel="Exportar relatorio"
         >
           Exportar relatorio
         </PrimaryButton>
       </ScrollView>
       <BottomNav active="home" nav={nav} role="gestor" />
+      <BottomSheet
+        visible={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        title="Menu"
+        options={MENU_OPTIONS}
+      />
+      <BottomSheet
+        visible={exportOpen}
+        onClose={() => setExportOpen(false)}
+        title="Escolha o formato"
+        options={EXPORT_OPTIONS}
+      />
+    </View>
+  );
+}
+
+function DonutLegend({ cats }) {
+  return (
+    <View style={[styles.pieRow, SHADOW.sm]}>
+      <View style={styles.donut} />
+      <View style={{ flex: 1, marginLeft: 18 }}>
+        {cats.map((c) => (
+          <View key={c.l} style={styles.legendRow}>
+            <View style={[styles.legendDot, { backgroundColor: c.c }]} />
+            <Text style={styles.legendTxt}>{c.l}</Text>
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -139,7 +148,7 @@ const styles = StyleSheet.create({
     borderWidth: 18,
     borderColor: C.navy,
     borderRightColor: C.accent,
-    borderBottomColor: '#3b82f6',
+    borderBottomColor: C.blue,
   },
   legendRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   legendDot: { width: 12, height: 12, borderRadius: 3, marginRight: 8 },

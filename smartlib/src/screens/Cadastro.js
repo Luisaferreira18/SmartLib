@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
   },
   capaTxt: { fontSize: 24 },
   capaLabel: { color: C.muted, fontSize: 11, marginTop: 4 },
-  erro: { color: '#b91c1c', fontSize: 12, marginTop: -12, marginBottom: 10 },
+  erro: { color: C.danger, fontSize: 12, marginTop: -12, marginBottom: 10 },
 });

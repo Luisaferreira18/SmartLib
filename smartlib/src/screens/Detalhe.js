@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Alert, Share } from 'react-native';
-import { C } from '../theme';
+import { C, BADGE } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
 import Badge from '../components/Badge';
@@ -8,11 +8,20 @@ import Cover from '../components/Cover';
 import { PrimaryButton, GhostButton } from '../components/Button';
 
 export default function Detalhe({ nav, params, user }) {
-  const b = (params && params.book) || { t: 'O Pequeno Principe', a: 'Antoine de Saint-Exupery' };
+  const b = (params && params.book) || {
+    t: 'O Pequeno Principe', a: 'Antoine de Saint-Exupery',
+    s: 'Poucas unidades', k: 'warn', cat: 'Infantil',
+    editora: 'Agir', ano: '1943', unidades: 1,
+    sinopse: 'Uma linda fabula sobre amizade, amor e descobertas.',
+  };
+
   const [favorito, setFavorito] = useState(false);
   const [reservado, setReservado] = useState(false);
 
+  const indisponivel = b.k === 'neutral';
+
   const handleReservar = () => {
+    if (indisponivel) return;
     if (reservado) {
       Alert.alert('Ja reservado', 'Voce ja possui uma reserva para este livro.');
       return;
@@ -33,9 +42,7 @@ export default function Detalhe({ nav, params, user }) {
     );
   };
 
-  const handleFavoritar = () => {
-    setFavorito((prev) => !prev);
-  };
+  const handleFavoritar = () => setFavorito((prev) => !prev);
 
   const handleCompartilhar = async () => {
     try {
@@ -48,6 +55,12 @@ export default function Detalhe({ nav, params, user }) {
     }
   };
 
+  const unidadesLabel =
+    b.unidades == null ? '' :
+    b.unidades === 0 ? '0 unidades' :
+    b.unidades === 1 ? '1 unidade' :
+    `${b.unidades} unidades`;
+
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <TopBar
@@ -58,14 +71,14 @@ export default function Detalhe({ nav, params, user }) {
       />
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 110 }}>
         <View style={{ flexDirection: 'row' }}>
-          <Cover w={130} h={178} label="LIVRO" big />
+          <Cover w={130} h={178} label={b.t} big />
           <View style={{ flex: 1, marginLeft: 16 }}>
             <Text style={styles.title}>{b.t}</Text>
             <Text style={styles.author}>{b.a}</Text>
             <View style={{ marginTop: 10, flexDirection: 'row' }}>
-              <Badge kind="ok">Disponivel</Badge>
+              <Badge kind={b.k}>{b.s}</Badge>
             </View>
-            <Text style={styles.units}>5 unidades</Text>
+            {unidadesLabel ? <Text style={styles.units}>{unidadesLabel}</Text> : null}
           </View>
         </View>
 
@@ -74,30 +87,36 @@ export default function Detalhe({ nav, params, user }) {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View>
             <Text style={styles.metaLabel}>Categoria</Text>
-            <Text style={styles.metaValue}>Literatura</Text>
+            <Text style={styles.metaValue}>{b.cat || '—'}</Text>
           </View>
           <View>
             <Text style={styles.metaLabel}>Editora</Text>
-            <Text style={styles.metaValue}>Companhia</Text>
+            <Text style={styles.metaValue}>{b.editora || '—'}</Text>
           </View>
           <View>
             <Text style={styles.metaLabel}>Ano</Text>
-            <Text style={styles.metaValue}>1943</Text>
+            <Text style={styles.metaValue}>{b.ano || '—'}</Text>
           </View>
         </View>
 
         <Text style={[styles.metaLabel, { marginTop: 22 }]}>Descricao</Text>
-        <Text style={styles.desc}>
-          Uma linda fabula sobre amizade, amor e descobertas. Uma historia atemporal que encanta
-          leitores de todas as idades ao redor do mundo.
-        </Text>
+        <Text style={styles.desc}>{b.sinopse || 'Sem descricao disponivel.'}</Text>
 
         <PrimaryButton
           onPress={handleReservar}
-          accessibilityLabel={reservado ? 'Livro ja reservado' : 'Reservar livro'}
-          style={reservado ? { backgroundColor: '#2eb86b' } : {}}
+          accessibilityLabel={
+            indisponivel ? 'Livro indisponivel' : reservado ? 'Livro ja reservado' : 'Reservar livro'
+          }
+          style={
+            indisponivel
+              ? { backgroundColor: C.muted }
+              : reservado
+              ? { backgroundColor: C.green }
+              : {}
+          }
+          disabled={indisponivel}
         >
-          {reservado ? '✓ Reservado' : 'Reservar'}
+          {indisponivel ? 'Indisponivel' : reservado ? '✓ Reservado' : 'Reservar'}
         </PrimaryButton>
         <GhostButton
           onPress={handleFavoritar}

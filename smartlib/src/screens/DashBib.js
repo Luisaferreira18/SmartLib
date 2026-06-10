@@ -1,44 +1,43 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { C } from '../theme';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { C, SHADOW } from '../theme';
 import TopBar from '../components/TopBar';
 import BottomNav from '../components/BottomNav';
+import BottomSheet from '../components/BottomSheet';
 
 const STATS = [
   { v: '1.248', l: 'Livros cadastrados', tint: C.blueT },
   { v: '56', l: 'Emprestimos ativos', tint: C.greenT },
-  { v: '8', l: 'Atrasos', tint: '#fee2e2' },
+  { v: '8', l: 'Atrasos', tint: C.dangerT },
   { v: '320', l: 'Usuarios ativos', tint: C.purpleT },
 ];
 
 const ACOES = [
   { t: 'Cadastrar livro', icon: '📖', color: C.navy, to: 'cadastro' },
-  { t: 'Registrar emprestimo', icon: '📤', color: '#2eb86b', to: 'registrar' },
-  { t: 'Registrar devolucao', icon: '📥', color: '#ff8c1a', to: 'devolucao' },
+  { t: 'Registrar emprestimo', icon: '📤', color: C.green, to: 'registrar' },
+  { t: 'Registrar devolucao', icon: '📥', color: C.orange, to: 'devolucao' },
 ];
 
 export default function DashBib({ nav, user }) {
   const nome = user?.name || 'Bibliotecario';
   const org = user?.org || 'Biblioteca';
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleMenu = () => {
-    Alert.alert('Menu', null, [
-      { text: '📖 Cadastrar livro', onPress: () => nav.navigate('cadastro') },
-      { text: '📤 Registrar emprestimo', onPress: () => nav.navigate('registrar') },
-      { text: '📥 Registrar devolucao', onPress: () => nav.navigate('devolucao') },
-      { text: 'Cancelar', style: 'cancel' },
-    ]);
-  };
+  const MENU_OPTIONS = [
+    { label: 'Cadastrar livro', icon: '📖', onPress: () => nav.navigate('cadastro') },
+    { label: 'Registrar emprestimo', icon: '📤', onPress: () => nav.navigate('registrar') },
+    { label: 'Registrar devolucao', icon: '📥', onPress: () => nav.navigate('devolucao') },
+  ];
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title={org} right="☰" onRightPress={handleMenu} />
+      <TopBar title={org} right="☰" onRightPress={() => setMenuOpen(true)} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         <Text style={styles.hi}>Ola, {nome}!</Text>
         <Text style={styles.sub}>{org}</Text>
         <View style={styles.grid}>
           {STATS.map((s, i) => (
-            <View key={i} style={[styles.statCard, { backgroundColor: s.tint }]}>
+            <View key={i} style={[styles.statCard, { backgroundColor: s.tint }, SHADOW.sm]}>
               <Text style={styles.statValue}>{s.v}</Text>
               <Text style={styles.statLabel}>{s.l}</Text>
             </View>
@@ -48,7 +47,7 @@ export default function DashBib({ nav, user }) {
         {ACOES.map((a, i) => (
           <TouchableOpacity
             key={i}
-            style={[styles.action, { backgroundColor: a.color }]}
+            style={[styles.action, { backgroundColor: a.color }, SHADOW.sm]}
             onPress={() => nav.navigate(a.to)}
             accessibilityLabel={a.t}
             activeOpacity={0.8}
@@ -59,6 +58,12 @@ export default function DashBib({ nav, user }) {
         ))}
       </ScrollView>
       <BottomNav active="home" nav={nav} role="bibliotecario" />
+      <BottomSheet
+        visible={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        title="Menu"
+        options={MENU_OPTIONS}
+      />
     </View>
   );
 }

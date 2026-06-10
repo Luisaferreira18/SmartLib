@@ -76,5 +76,5 @@ export default function AlterarSenha({ nav }) {
 }
 
 const styles = StyleSheet.create({
-  erro: { color: '#b91c1c', fontSize: 12, marginTop: -12, marginBottom: 10 },
+  erro: { color: C.danger, fontSize: 12, marginTop: -12, marginBottom: 10 },
 });

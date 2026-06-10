@@ -47,6 +47,7 @@ export default function CriarConta({ nav }) {
           placeholder="Seu nome"
           value={nome}
           onChangeText={(t) => { setNome(t); limparErro('nome'); }}
+          autoCapitalize="words"
         />
         {erros.nome ? <Text style={styles.erro}>{erros.nome}</Text> : null}
 
@@ -89,5 +90,5 @@ export default function CriarConta({ nav }) {
 }
 
 const styles = StyleSheet.create({
-  erro: { color: '#b91c1c', fontSize: 12, marginTop: -12, marginBottom: 10 },
+  erro: { color: C.danger, fontSize: 12, marginTop: -12, marginBottom: 10 },
 });

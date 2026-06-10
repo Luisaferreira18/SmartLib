@@ -45,6 +45,7 @@ export default function Registrar({ nav }) {
           placeholder="Buscar usuario pelo nome ou CPF"
           value={usuario}
           onChangeText={(t) => { setUsuario(t); limparErro('usuario'); }}
+          autoCapitalize="words"
         />
         {erros.usuario ? <Text style={styles.erro}>{erros.usuario}</Text> : null}
 
@@ -86,5 +87,5 @@ export default function Registrar({ nav }) {
 }
 
 const styles = StyleSheet.create({
-  erro: { color: '#b91c1c', fontSize: 12, marginTop: -12, marginBottom: 10 },
+  erro: { color: C.danger, fontSize: 12, marginTop: -12, marginBottom: 10 },
 });

@@ -2,39 +2,45 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { C } from '../theme';
 
-export function PrimaryButton({ children, onPress, style }) {
+export function PrimaryButton({ children, onPress, style, disabled, accessibilityLabel }) {
   return (
-    <TouchableOpacity style={[styles.primary, style]} onPress={onPress}>
-      <Text style={styles.primaryTxt}>{children}</Text>
+    <TouchableOpacity
+      style={[styles.primary, style, disabled && styles.disabled]}
+      onPress={disabled ? undefined : onPress}
+      activeOpacity={disabled ? 1 : 0.8}
+      accessibilityLabel={accessibilityLabel}
+    >
+      <Text style={[styles.primaryTxt, disabled && { opacity: 0.7 }]}>{children}</Text>
     </TouchableOpacity>
   );
 }
 
-export function GhostButton({ children, onPress, style }) {
+export function GhostButton({ children, onPress, style, accessibilityLabel }) {
   return (
-    <TouchableOpacity style={[styles.ghost, style]} onPress={onPress}>
+    <TouchableOpacity style={[styles.ghost, style]} onPress={onPress} activeOpacity={0.7} accessibilityLabel={accessibilityLabel}>
       <Text style={styles.ghostTxt}>{children}</Text>
     </TouchableOpacity>
   );
 }
 
-export function AccentButton({ children, onPress, style }) {
+export function AccentButton({ children, onPress, style, accessibilityLabel }) {
   return (
-    <TouchableOpacity style={[styles.accent, style]} onPress={onPress}>
+    <TouchableOpacity style={[styles.accent, style]} onPress={onPress} activeOpacity={0.8} accessibilityLabel={accessibilityLabel}>
       <Text style={styles.accentTxt}>{children}</Text>
     </TouchableOpacity>
   );
 }
 
-export function TextButton({ children, onPress, style }) {
+export function TextButton({ children, onPress, style, accessibilityLabel }) {
   return (
-    <TouchableOpacity style={[styles.text, style]} onPress={onPress}>
+    <TouchableOpacity style={[styles.text, style]} onPress={onPress} activeOpacity={0.7} accessibilityLabel={accessibilityLabel}>
       <Text style={styles.textTxt}>{children}</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
+  disabled: { opacity: 0.55 },
   primary: {
     backgroundColor: C.navy,
     borderRadius: 12,

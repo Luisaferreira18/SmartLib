@@ -10,6 +10,7 @@ export default function Field({
   secure,
   keyboardType,
   accessibilityLabel,
+  autoCapitalize = 'none',
 }) {
   const [internal, setInternal] = useState(value || '');
   const controlled = onChangeText !== undefined;
@@ -24,7 +25,7 @@ export default function Field({
         onChangeText={controlled ? onChangeText : setInternal}
         secureTextEntry={!!secure}
         keyboardType={keyboardType || 'default'}
-        autoCapitalize="none"
+        autoCapitalize={autoCapitalize}
         accessibilityLabel={accessibilityLabel || label || placeholder}
       />
     </View>

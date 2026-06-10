@@ -47,6 +47,7 @@ export default function EditarPerfil({ nav, user, setUser }) {
           placeholder="Seu nome"
           value={nome}
           onChangeText={(t) => { setNome(t); limparErro('nome'); }}
+          autoCapitalize="words"
         />
         {erros.nome ? <Text style={styles.erro}>{erros.nome}</Text> : null}
 
@@ -81,5 +82,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarTxt: { color: '#fff', fontSize: 32, fontWeight: '700' },
-  erro: { color: '#b91c1c', fontSize: 12, marginTop: -12, marginBottom: 10 },
+  erro: { color: C.danger, fontSize: 12, marginTop: -12, marginBottom: 10 },
 });

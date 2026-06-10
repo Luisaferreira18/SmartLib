@@ -49,6 +49,7 @@ export default function Devolucao({ nav }) {
           placeholder="Buscar usuario pelo nome ou CPF"
           value={usuario}
           onChangeText={(t) => { setUsuario(t); limparErro('usuario'); }}
+          autoCapitalize="words"
         />
         {erros.usuario ? <Text style={styles.erro}>{erros.usuario}</Text> : null}
 
@@ -72,7 +73,7 @@ export default function Devolucao({ nav }) {
         <AccentButton
           onPress={handleConfirmar}
           accessibilityLabel="Confirmar devolucao"
-          style={{ backgroundColor: '#ff8c1a' }}
+          style={{ backgroundColor: C.orange }}
         >
           Confirmar devolucao
         </AccentButton>
@@ -86,13 +87,13 @@ export default function Devolucao({ nav }) {
 
 const styles = StyleSheet.create({
   infoBox: {
-    backgroundColor: '#fff7ed',
+    backgroundColor: C.orangeT,
     borderRadius: 10,
     padding: 12,
     marginBottom: 20,
     borderLeftWidth: 3,
-    borderLeftColor: '#ff8c1a',
+    borderLeftColor: C.orange,
   },
-  infoTxt: { fontSize: 13, color: '#92400e', lineHeight: 18 },
-  erro: { color: '#b91c1c', fontSize: 12, marginTop: -12, marginBottom: 10 },
+  infoTxt: { fontSize: 13, color: C.orangeText, lineHeight: 18 },
+  erro: { color: C.danger, fontSize: 12, marginTop: -12, marginBottom: 10 },
 });
