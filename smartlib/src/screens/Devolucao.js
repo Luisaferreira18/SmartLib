@@ -1,9 +1,26 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text, StyleSheet, Alert } from 'react-native';
+import {
+  View, ScrollView, Text, StyleSheet, Alert,
+  KeyboardAvoidingView, Platform,
+} from 'react-native';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 import Field from '../components/Field';
 import { AccentButton, TextButton } from '../components/Button';
+
+function formatDate(raw) {
+  const nums = raw.replace(/\D/g, '').slice(0, 8);
+  if (nums.length <= 2) return nums;
+  if (nums.length <= 4) return `${nums.slice(0, 2)}/${nums.slice(2)}`;
+  return `${nums.slice(0, 2)}/${nums.slice(2, 4)}/${nums.slice(4)}`;
+}
+
+function validarData(d) {
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(d)) return false;
+  const [dd, mm, yyyy] = d.split('/');
+  const dt = new Date(parseInt(yyyy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
+  return !isNaN(dt.getTime());
+}
 
 export default function Devolucao({ nav }) {
   const [usuario, setUsuario] = useState('');
@@ -17,7 +34,11 @@ export default function Devolucao({ nav }) {
     const e = {};
     if (!usuario.trim()) e.usuario = 'Nome do usuario obrigatorio';
     if (!livro.trim()) e.livro = 'Titulo ou ISBN do livro obrigatorio';
-    if (!dataDev.trim()) e.dataDev = 'Data de devolucao obrigatoria';
+    if (!dataDev.trim()) {
+      e.dataDev = 'Data de devolucao obrigatoria';
+    } else if (!validarData(dataDev)) {
+      e.dataDev = 'Data invalida (use DD/MM/AAAA)';
+    }
     setErros(e);
     return Object.keys(e).length === 0;
   };
@@ -32,9 +53,13 @@ export default function Devolucao({ nav }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.card }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: C.card }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <TopBar title="Registrar devolucao" onBack={nav.goBack} />
       <ScrollView
+        style={{ flex: 1 }}
         contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
         keyboardShouldPersistTaps="handled"
       >
@@ -65,7 +90,7 @@ export default function Devolucao({ nav }) {
           label="Data de devolucao *"
           placeholder="DD/MM/AAAA"
           value={dataDev}
-          onChangeText={(t) => { setDataDev(t); limparErro('dataDev'); }}
+          onChangeText={(t) => { setDataDev(formatDate(t)); limparErro('dataDev'); }}
           keyboardType="numeric"
         />
         {erros.dataDev ? <Text style={styles.erro}>{erros.dataDev}</Text> : null}
@@ -81,7 +106,7 @@ export default function Devolucao({ nav }) {
           Cancelar
         </TextButton>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

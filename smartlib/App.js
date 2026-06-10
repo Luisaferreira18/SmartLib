@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet, Platform } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { SafeAreaView, StatusBar, StyleSheet, Platform, BackHandler } from 'react-native';
 import { C } from './src/theme';
 
 import Splash from './src/screens/Splash';
@@ -43,6 +43,9 @@ const SCREENS = {
 export default function App() {
   const [stack, setStack] = useState([{ name: 'splash', params: {} }]);
   const [user, setUser] = useState(null);
+  const stackRef = useRef(stack);
+  useEffect(() => { stackRef.current = stack; }, [stack]);
+
   const current = stack[stack.length - 1];
   const Screen = SCREENS[current.name];
 
@@ -52,6 +55,18 @@ export default function App() {
     reset: (name, params = {}) => setStack([{ name, params }]),
     goBack: () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s)),
   };
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (stackRef.current.length > 1) {
+        setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
+        return true;
+      }
+      return false;
+    });
+    return () => sub.remove();
+  }, []);
 
   return (
     <SafeAreaView style={styles.root}>

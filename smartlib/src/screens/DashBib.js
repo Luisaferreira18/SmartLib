@@ -31,7 +31,7 @@ export default function DashBib({ nav, user }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title={org} right="☰" onRightPress={() => setMenuOpen(true)} />
+      <TopBar title={org} right="☰" onRightPress={() => setMenuOpen(true)} bellCount={2} onBellPress={() => nav.navigate('notificacoes')} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         <Text style={styles.hi}>Ola, {nome}!</Text>
         <Text style={styles.sub}>{org}</Text>

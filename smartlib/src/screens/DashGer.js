@@ -47,7 +47,7 @@ export default function DashGer({ nav, user }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title="Dashboard Gerencial" right="☰" onRightPress={() => setMenuOpen(true)} />
+      <TopBar title="Dashboard Gerencial" right="☰" onRightPress={() => setMenuOpen(true)} bellCount={2} onBellPress={() => nav.navigate('notificacoes')} />
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>
         <Text style={styles.hi}>Ola, {nome}!</Text>
         <Text style={styles.sub}>{org}</Text>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { C } from '../theme';
+import { C, SHADOW } from '../theme';
 import BottomNav from '../components/BottomNav';
 
 const CARDS = [
@@ -15,11 +15,26 @@ export default function Home({ nav, user }) {
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <View style={styles.header}>
-        <Text style={styles.hi}>Ola, {nome}</Text>
-        <Text style={styles.q}>O que voce quer ler hoje?</Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.hi}>Ola, {nome}</Text>
+            <Text style={styles.q}>O que voce quer ler hoje?</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => nav.navigate('notificacoes')}
+            style={styles.bellWrap}
+            accessibilityLabel="Notificacoes"
+            activeOpacity={0.7}
+          >
+            <Text style={styles.bellIcon}>🔔</Text>
+            <View style={styles.bellBadge}>
+              <Text style={styles.bellBadgeTxt}>2</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
       <TouchableOpacity
-        style={styles.searchPill}
+        style={[styles.searchPill, SHADOW.sm]}
         onPress={() => nav.navigate('catalogo')}
         activeOpacity={0.7}
         accessibilityLabel="Buscar livros"
@@ -30,7 +45,7 @@ export default function Home({ nav, user }) {
         {CARDS.map((c, i) => (
           <TouchableOpacity
             key={i}
-            style={styles.card}
+            style={[styles.card, SHADOW.sm]}
             onPress={() => nav.navigate(c.to)}
             activeOpacity={0.75}
             accessibilityLabel={c.t}
@@ -52,8 +67,24 @@ export default function Home({ nav, user }) {
 
 const styles = StyleSheet.create({
   header: { backgroundColor: C.navy, paddingHorizontal: 20, paddingTop: 24, paddingBottom: 34 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   hi: { color: '#fff', fontSize: 18, fontWeight: '700' },
   q: { color: C.subhead, fontSize: 13, marginTop: 6 },
+  bellWrap: { position: 'relative', padding: 4 },
+  bellIcon: { fontSize: 22 },
+  bellBadge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: C.danger,
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  bellBadgeTxt: { color: '#fff', fontSize: 9, fontWeight: '700' },
   searchPill: {
     backgroundColor: C.card,
     height: 42,
@@ -62,11 +93,6 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: 'center',
     paddingHorizontal: 18,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
   },
   searchTxt: { color: C.muted, fontSize: 13 },
   card: {

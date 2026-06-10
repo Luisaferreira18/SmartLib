@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
+import {
+  View, Text, Image, ScrollView, StyleSheet, Alert, TouchableOpacity,
+  KeyboardAvoidingView, Platform,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 import Field from '../components/Field';
@@ -12,9 +16,31 @@ export default function Cadastro({ nav }) {
   const [categoria, setCategoria] = useState('');
   const [editora, setEditora] = useState('');
   const [ano, setAno] = useState('');
+  const [capaUri, setCapaUri] = useState(null);
   const [erros, setErros] = useState({});
 
   const limparErro = (campo) => setErros((e) => ({ ...e, [campo]: null }));
+
+  const handleCapa = async () => {
+    if (Platform.OS === 'web') {
+      Alert.alert('Web', 'Selecao de imagem nao esta disponivel no navegador. Use o app no celular.');
+      return;
+    }
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permissao necessaria', 'Permita o acesso a galeria para selecionar uma capa.');
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [2, 3],
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets?.[0]?.uri) {
+      setCapaUri(result.assets[0].uri);
+    }
+  };
 
   const validar = () => {
     const e = {};
@@ -22,7 +48,7 @@ export default function Cadastro({ nav }) {
     if (!titulo.trim()) e.titulo = 'Titulo obrigatorio';
     if (!autor.trim()) e.autor = 'Autor obrigatorio';
     const anoNum = parseInt(ano);
-    if (ano.trim() && (isNaN(anoNum) || anoNum < 1000 || anoNum > new Date().getFullYear())) {
+    if (ano.trim() && (isNaN(anoNum) || anoNum < 1000 || anoNum > 2099)) {
       e.ano = 'Ano invalido';
     }
     setErros(e);
@@ -37,9 +63,16 @@ export default function Cadastro({ nav }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.card }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: C.card }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <TopBar title="Cadastrar novo livro" onBack={nav.goBack} />
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 100 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1, marginRight: 14 }}>
             <Field
@@ -51,10 +84,21 @@ export default function Cadastro({ nav }) {
             />
             {erros.isbn ? <Text style={styles.erro}>{erros.isbn}</Text> : null}
           </View>
-          <View style={styles.capa}>
-            <Text style={styles.capaTxt}>📷</Text>
-            <Text style={styles.capaLabel}>Capa</Text>
-          </View>
+          <TouchableOpacity
+            style={styles.capa}
+            onPress={handleCapa}
+            accessibilityLabel="Selecionar capa do livro"
+            activeOpacity={0.7}
+          >
+            {capaUri ? (
+              <Image source={{ uri: capaUri }} style={styles.capaImg} />
+            ) : (
+              <>
+                <Text style={styles.capaTxt}>📷</Text>
+                <Text style={styles.capaLabel}>Capa</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
 
         <Field
@@ -62,6 +106,7 @@ export default function Cadastro({ nav }) {
           placeholder="Digite o titulo do livro"
           value={titulo}
           onChangeText={(t) => { setTitulo(t); limparErro('titulo'); }}
+          autoCapitalize="words"
         />
         {erros.titulo ? <Text style={styles.erro}>{erros.titulo}</Text> : null}
 
@@ -70,6 +115,7 @@ export default function Cadastro({ nav }) {
           placeholder="Nome completo do autor"
           value={autor}
           onChangeText={(t) => { setAutor(t); limparErro('autor'); }}
+          autoCapitalize="words"
         />
         {erros.autor ? <Text style={styles.erro}>{erros.autor}</Text> : null}
 
@@ -78,6 +124,7 @@ export default function Cadastro({ nav }) {
           placeholder="Ex.: Literatura, Infantil, Didatico..."
           value={categoria}
           onChangeText={setCategoria}
+          autoCapitalize="sentences"
         />
 
         <Field
@@ -85,6 +132,7 @@ export default function Cadastro({ nav }) {
           placeholder="Nome da editora"
           value={editora}
           onChangeText={setEditora}
+          autoCapitalize="words"
         />
 
         <Field
@@ -100,7 +148,7 @@ export default function Cadastro({ nav }) {
           Salvar livro
         </AccentButton>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -116,7 +164,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 21,
+    overflow: 'hidden',
   },
+  capaImg: { width: 94, height: 94, borderRadius: 12 },
   capaTxt: { fontSize: 24 },
   capaLabel: { color: C.muted, fontSize: 11, marginTop: 4 },
   erro: { color: C.danger, fontSize: 12, marginTop: -12, marginBottom: 10 },

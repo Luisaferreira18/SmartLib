@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
+import {
+  View, Text, ScrollView, StyleSheet, Alert,
+  KeyboardAvoidingView, Platform,
+} from 'react-native';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 import Field from '../components/Field';
@@ -36,9 +39,13 @@ export default function CriarConta({ nav }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.card }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: C.card }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <TopBar title="Criar conta" onBack={nav.goBack} />
       <ScrollView
+        style={{ flex: 1 }}
         contentContainerStyle={{ padding: 24, paddingBottom: 60 }}
         keyboardShouldPersistTaps="handled"
       >
@@ -85,7 +92,7 @@ export default function CriarConta({ nav }) {
           Ja tenho conta
         </TextButton>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

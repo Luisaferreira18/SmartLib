@@ -1,9 +1,30 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text, StyleSheet, Alert } from 'react-native';
+import {
+  View, ScrollView, Text, StyleSheet, Alert,
+  KeyboardAvoidingView, Platform,
+} from 'react-native';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 import Field from '../components/Field';
 import { AccentButton, TextButton } from '../components/Button';
+
+function formatDate(raw) {
+  const nums = raw.replace(/\D/g, '').slice(0, 8);
+  if (nums.length <= 2) return nums;
+  if (nums.length <= 4) return `${nums.slice(0, 2)}/${nums.slice(2)}`;
+  return `${nums.slice(0, 2)}/${nums.slice(2, 4)}/${nums.slice(4)}`;
+}
+
+function parseDate(d) {
+  const [dd, mm, yyyy] = d.split('/');
+  return new Date(parseInt(yyyy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
+}
+
+function validarData(d) {
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(d)) return false;
+  const dt = parseDate(d);
+  return !isNaN(dt.getTime());
+}
 
 export default function Registrar({ nav }) {
   const [usuario, setUsuario] = useState('');
@@ -18,8 +39,18 @@ export default function Registrar({ nav }) {
     const e = {};
     if (!usuario.trim()) e.usuario = 'Nome do usuario obrigatorio';
     if (!livro.trim()) e.livro = 'Titulo ou ISBN do livro obrigatorio';
-    if (!dataEmp.trim()) e.dataEmp = 'Data de emprestimo obrigatoria';
-    if (!dataDev.trim()) e.dataDev = 'Data de devolucao obrigatoria';
+    if (!dataEmp.trim()) {
+      e.dataEmp = 'Data de emprestimo obrigatoria';
+    } else if (!validarData(dataEmp)) {
+      e.dataEmp = 'Data invalida (use DD/MM/AAAA)';
+    }
+    if (!dataDev.trim()) {
+      e.dataDev = 'Data de devolucao obrigatoria';
+    } else if (!validarData(dataDev)) {
+      e.dataDev = 'Data invalida (use DD/MM/AAAA)';
+    } else if (validarData(dataEmp) && parseDate(dataDev) <= parseDate(dataEmp)) {
+      e.dataDev = 'Devolucao deve ser depois do emprestimo';
+    }
     setErros(e);
     return Object.keys(e).length === 0;
   };
@@ -34,9 +65,13 @@ export default function Registrar({ nav }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.card }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: C.card }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <TopBar title="Registrar emprestimo" onBack={nav.goBack} />
       <ScrollView
+        style={{ flex: 1 }}
         contentContainerStyle={{ padding: 20, paddingBottom: 60 }}
         keyboardShouldPersistTaps="handled"
       >
@@ -61,7 +96,7 @@ export default function Registrar({ nav }) {
           label="Data do emprestimo *"
           placeholder="DD/MM/AAAA"
           value={dataEmp}
-          onChangeText={(t) => { setDataEmp(t); limparErro('dataEmp'); }}
+          onChangeText={(t) => { setDataEmp(formatDate(t)); limparErro('dataEmp'); }}
           keyboardType="numeric"
         />
         {erros.dataEmp ? <Text style={styles.erro}>{erros.dataEmp}</Text> : null}
@@ -70,7 +105,7 @@ export default function Registrar({ nav }) {
           label="Data de devolucao prevista *"
           placeholder="DD/MM/AAAA"
           value={dataDev}
-          onChangeText={(t) => { setDataDev(t); limparErro('dataDev'); }}
+          onChangeText={(t) => { setDataDev(formatDate(t)); limparErro('dataDev'); }}
           keyboardType="numeric"
         />
         {erros.dataDev ? <Text style={styles.erro}>{erros.dataDev}</Text> : null}
@@ -82,7 +117,7 @@ export default function Registrar({ nav }) {
           Cancelar
         </TextButton>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
