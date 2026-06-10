@@ -67,7 +67,7 @@ function DonutChart({ data, size = 96, strokeWidth = 20 }) {
   return <Svg width={size} height={size}>{paths}</Svg>;
 }
 
-export default function DashGer({ nav, user }) {
+export default function DashGer({ nav, user, unreadCount = 0 }) {
   const nome = user?.name || 'Gestor';
   const org = user?.org || 'Fundacao Municipal de Cultura';
   const [menuOpen, setMenuOpen] = useState(false);
@@ -89,7 +89,7 @@ export default function DashGer({ nav, user }) {
         title="Dashboard Gerencial"
         right="☰"
         onRightPress={() => setMenuOpen(true)}
-        bellCount={2}
+        bellCount={unreadCount}
         onBellPress={() => nav.navigate('notificacoes')}
       />
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 110 }}>

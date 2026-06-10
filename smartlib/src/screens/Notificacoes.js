@@ -1,19 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { C } from '../theme';
 import TopBar from '../components/TopBar';
 
-const NOTIFS_INIT = [
-  { id: 1, title: 'Devolucao proxima', msg: '"1984" vence em 2 dias. Renove ou devolva.', hora: '09:30', lida: false },
-  { id: 2, title: 'Reserva disponivel', msg: 'O livro "O Senhor dos Aneis" esta disponivel para retirada.', hora: 'Ontem', lida: false },
-  { id: 3, title: 'Emprestimo renovado', msg: '"Dom Casmurro" foi renovado com sucesso ate 30/06.', hora: 'Seg', lida: true },
-  { id: 4, title: 'Livro devolvido', msg: 'A devolucao de "O Pequeno Principe" foi confirmada.', hora: '02/06', lida: true },
-  { id: 5, title: 'Nova recomendacao', msg: 'Com base no seu historico: "Admiravel Mundo Novo".', hora: '01/06', lida: true },
-];
-
-export default function Notificacoes({ nav }) {
-  const [notifs, setNotifs] = useState(NOTIFS_INIT);
-
+export default function Notificacoes({ nav, notifs = [], setNotifs }) {
   const marcarLida = (id) =>
     setNotifs((ns) => ns.map((n) => (n.id === id ? { ...n, lida: true } : n)));
 
@@ -38,7 +28,6 @@ export default function Notificacoes({ nav }) {
         )}
         {notifs.length === 0 && (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>🔔</Text>
             <Text style={styles.emptyTitle}>Sem notificacoes</Text>
             <Text style={styles.emptyMsg}>Voce esta em dia!</Text>
           </View>
@@ -80,7 +69,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 14, fontWeight: '700', color: C.dark, marginBottom: 4 },
   msg: { fontSize: 13, color: C.muted, lineHeight: 18 },
   empty: { alignItems: 'center', marginTop: 80 },
-  emptyIcon: { fontSize: 48 },
   emptyTitle: { fontSize: 16, fontWeight: '700', color: C.dark, marginTop: 16 },
   emptyMsg: { fontSize: 13, color: C.muted, marginTop: 6 },
 });

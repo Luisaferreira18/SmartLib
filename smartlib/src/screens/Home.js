@@ -11,7 +11,7 @@ const CARDS = [
   { t: 'Historico', d: 'Historico de leituras.', tint: C.purpleT, to: 'historico' },
 ];
 
-export default function Home({ nav, user }) {
+export default function Home({ nav, user, unreadCount = 0 }) {
   const nome = user?.name || 'Leitor';
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
@@ -28,9 +28,11 @@ export default function Home({ nav, user }) {
             activeOpacity={0.7}
           >
             <Ionicons name="notifications-outline" size={24} color="#fff" />
-            <View style={styles.bellBadge}>
-              <Text style={styles.bellBadgeTxt}>2</Text>
-            </View>
+            {unreadCount > 0 && (
+              <View style={styles.bellBadge}>
+                <Text style={styles.bellBadgeTxt}>{unreadCount > 9 ? '9+' : String(unreadCount)}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       </View>

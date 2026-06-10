@@ -18,7 +18,7 @@ const ACOES = [
   { t: 'Registrar devolucao', icon: '📥', color: C.orange, to: 'devolucao' },
 ];
 
-export default function DashBib({ nav, user }) {
+export default function DashBib({ nav, user, unreadCount = 0 }) {
   const nome = user?.name || 'Bibliotecario';
   const org = user?.org || 'Biblioteca';
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function DashBib({ nav, user }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar title={org} right="☰" onRightPress={() => setMenuOpen(true)} bellCount={2} onBellPress={() => nav.navigate('notificacoes')} />
+      <TopBar title={org} right="☰" onRightPress={() => setMenuOpen(true)} bellCount={unreadCount} onBellPress={() => nav.navigate('notificacoes')} />
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         <Text style={styles.hi}>Ola, {nome}!</Text>
         <Text style={styles.sub}>{org}</Text>
